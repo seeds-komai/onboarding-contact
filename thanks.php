@@ -13,5 +13,6 @@
  </head>
  <body>
     <p>お問い合わせありがとうございました。</p>
+    <a href="index.php">戻る</a>
  </body>
  </html>
