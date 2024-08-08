@@ -15,20 +15,19 @@ $building = $_POST['building'];
 $content = $_POST['content'];
 
 if(isset($_POST['reasons'])){
-   $reasons = $_POST['reasons'];
+	$reasons = $_POST['reasons'];
 }else{
-   $reasons = '';
+    $reasons = '';
 }
 
 if(is_string($reasons)){
-   $reasonsArray = explode(',',$reasons);
+    $reasonsArray = explode(',',$reasons);
 }else{
-   $reasonsArray = (array)$reasons;
+    $reasonsArray = (array)$reasons;
 }
 //DBにデータを入れる処理
 $connection = connectDB();
-$sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason)
-         VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content,:reasons)";
+$sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content,:reasons)";
 
 $stmt = $connection->prepare($sql);
 $stmt->bindValue(':name',$name,PDO::PARAM_STR);
@@ -45,20 +44,6 @@ $stmt->bindValue(':content',$content,PDO::PARAM_STR);
 $stmt->bindValue(':reasons',implode(",",$reasonsArray),PDO::PARAM_STR);
 
 $stmt->execute();
-// $stmt->execute([
-//    ':name' => $name,
-//    ':namerb' => $namerb,
-//    ':email' => $email,
-//    ':gender' => $gender,
-//    ':top_postalcode' => $top_postalcode,
-//    ':bottom_postalcode' => $bottom_postalcode,
-//    ':prefecture' => $prefecture,
-//    ':town' => $town,
-//    ':housenumber' => $housenumber,
-//    ':building' => $building,
-//    ':content' => $content,
-//    ':reasons' => implode(",",$reasonsArray)
-// ]);
 
 ?>
 

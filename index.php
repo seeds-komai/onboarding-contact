@@ -128,7 +128,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $select_reasons = array_map(function($reason) use ($reason_map) {
                 return $reason_map[$reason];
             }, $reasons);
-        // $reasons = isset($_POST['reasons']) ? $_POST['reasons'] : [];
         }
     }
 
@@ -206,9 +205,7 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
 
             <label for="gender">性別※</label>
             <div class="right">
-                <!-- <label for="male">男性</label> -->
                 男性<input type="radio" id = "male" name = "gender" value = "male" required>
-                <!-- <label for="female">女性</label> -->
                 女性<input type="radio" id = "female" name = "gender" value = "female" required>
             </div>
             <label for="postalcode">住所(郵便番号)※</label>
