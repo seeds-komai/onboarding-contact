@@ -4,6 +4,7 @@
  * ---------------------------------------- */
 require_once 'private/bootstrap.php';
 require_once 'private/database.php';
+require_once 'mapping.php';
 
 
 // 実装
@@ -25,72 +26,6 @@ $select_gender = "";
 $select_prefecture = "";
 $select_reasons = [];
 
-
-//性別をvalueの値から日本語へ変換するためのマッピング
-$gender_map = array(
-    'male' => '男性',
-    'female' => '女性'
-);
-
-//都道府県をvalueの値から日本語へ変換するためのマッピング
-$prefecture_map = array(
-    'hokkaido' => '北海道',
-    'aomori' => '青森県',
-    'iwate' => '岩手県',
-    'miyagi' => '宮城県',
-    'akita' => '秋田県',
-    'yamagata' => '山形県',
-    'fukushima' => '福島県',
-    'ibaraki' => '茨城県',
-    'tochigi' => '栃木県',
-    'gunma' => '群馬県',
-    'saitama' => '埼玉県',
-    'chiba' => '千葉県',
-    'tokyo' => '東京都',
-    'kanagawa' => '神奈川県',
-    'niigata' => '新潟県',
-    'toyama' => '富山県',
-    'ishikawa' => '石川県',
-    'fukui' => '福井県',
-    'yamanashi' => '山梨県',
-    'nagano' => '長野県',
-    'gifu' => '岐阜県',
-    'shizuoka' => '静岡県',
-    'aichi' => '愛知県',
-    'mie' => '三重県',
-    'shiga' => '滋賀県',
-    'kyoto' => '京都府',
-    'osaka' => '大阪府',
-    'hyogo' => '兵庫県',
-    'nara' => '奈良県',
-    'wakayama' => '和歌山県',
-    'tottori' => '鳥取県',
-    'shimane' => '島根県',
-    'okayama' => '岡山県',
-    'hiroshima' => '広島県',
-    'yamaguchi' => '山口県',
-    'tokushima' => '徳島県',
-    'kagawa' => '香川県',
-    'ehime' => '愛媛県',
-    'kochi' => '高知県',
-    'fukuoka' => '福岡県',
-    'saga' => '佐賀県',
-    'nagasaki' => '長崎県',
-    'kumamoto' => '熊本県',
-    'oita' => '大分県',
-    'miyazaki' => '宮崎県',
-    'kagoshima' => '鹿児島県',
-    'okinawa' => '沖縄県'
-);
-
-//知った経由を日本語へ変換するためのマッピング
-$reason_map = array(
-    'family' => '家族から聞いた',
-    'friend' => '友達から聞いた',
-    'newspaper' => '新聞',
-    'radio' => 'ラジオ',
-    'web' => 'Web'
-);
 
 //POSTのリクエストが来た時の動作
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -210,7 +145,7 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
             </div>
             <label for="postalcode">住所(郵便番号)※</label>
             <div class="right">
-                <input type="text" name = "top_postalcode" id = "top_postalcode" required>-<input type="text" name="bottom_postalcode" id = "bottom_postalcode" required>
+                <input type="number" name = "top_postalcode" id = "top_postalcode" required>-<input type="number" name="bottom_postalcode" id = "bottom_postalcode" required>
             </div>
             <label for="prefecture">住所(都道府県)※</label>
             <div  class="right">
@@ -294,20 +229,6 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
     <!--確認画面-->
     <?php if($page === 1){?>
         <h1>確認画面</h1>
-        <form method = "POST" action = thanks.php>
-            <!--postで送るためのデータ-->
-            <input type="hidden" name="name" value="<?php echo htmlspecialchars($name,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="namerb" value="<?php echo htmlspecialchars($namerb,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="email" value="<?php echo htmlspecialchars($email,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="gender" value="<?php echo htmlspecialchars($gender,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="top_postalcode" value="<?php echo htmlspecialchars($top_postalcode,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="bottom_postalcode" value="<?php echo htmlspecialchars($bottom_postalcode,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="prefecture" value="<?php echo htmlspecialchars($prefecture,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="town" value="<?php echo htmlspecialchars($town,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="housenumber" value="<?php echo htmlspecialchars($housenumber,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="building" value="<?php echo htmlspecialchars($building,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="content" value="<?php echo htmlspecialchars($content,ENT_QUOTES,'UTF-8'); ?>">
-            <input type="hidden" name="reasons" value="<?php echo htmlspecialchars(implode(',',$reasons),ENT_QUOTES,'UTF-8'); ?>">
             <!--確認内容-->
             <label for="name">氏名：</label><div class="right"><?php echo htmlspecialchars($name,ENT_QUOTES,'UTF-8'); ?></div>
             <label for="namerb">フリガナ：</label><div class="right"><?php echo htmlspecialchars($namerb,ENT_QUOTES,'UTF-8'); ?></div>
@@ -320,8 +241,22 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
             <label for="building">住所(建物)：</label><div class="right"><?php echo htmlspecialchars($building,ENT_QUOTES,'UTF-8'); ?></div>
             <label for="content">お問い合わせ内容：</label><div class="right"><?php echo htmlspecialchars($content,ENT_QUOTES,'UTF-8'); ?></div>
             <label for="reasons">このフォームを知った経由：</label><div class="right"><?php echo htmlspecialchars(implode(',',$select_reasons),ENT_QUOTES,'UTF-8');?></div><br>
-            <input type="submit" name="confirm" value="送信する">
-        </form>
+            <form method = "POST" action = thanks.php>
+                <!--postで送るためのデータ-->
+                <input type="hidden" name="name" value="<?php echo htmlspecialchars($name,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="namerb" value="<?php echo htmlspecialchars($namerb,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="gender" value="<?php echo htmlspecialchars($gender,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="top_postalcode" value="<?php echo htmlspecialchars($top_postalcode,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="bottom_postalcode" value="<?php echo htmlspecialchars($bottom_postalcode,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="prefecture" value="<?php echo htmlspecialchars($prefecture,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="town" value="<?php echo htmlspecialchars($town,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="housenumber" value="<?php echo htmlspecialchars($housenumber,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="building" value="<?php echo htmlspecialchars($building,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="content" value="<?php echo htmlspecialchars($content,ENT_QUOTES,'UTF-8'); ?>">
+                <input type="hidden" name="reasons" value="<?php echo htmlspecialchars(implode(',',$reasons),ENT_QUOTES,'UTF-8'); ?>">
+                <input type="submit" name="confirm" value="送信する">
+            </form>
 
         <form method = "POST" action = index.php>
             <input type="submit" name="edit" value="戻る">
