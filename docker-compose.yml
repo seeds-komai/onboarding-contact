@@ -20,3 +20,11 @@ services:
       - ./:/var/www/html
     ports:
       - "80:80"
+    depends_on:
+      - mailhog
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
