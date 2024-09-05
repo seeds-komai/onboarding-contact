@@ -52,10 +52,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $prefecture = "";
         }
         $prefecture = $_POST['prefecture'];
-        // else{
-        //     $prefecture = $_POST['prefecture'];
-        //     $select_prefecture = $prefecture_map[$prefecture];
-        // }
+
         $town = $_POST['town'];
         $housenumber = $_POST['housenumber'];
         $content = $_POST['content'];
@@ -63,9 +60,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $reasons = [];
         } else {
             $reasons = $_POST['reasons'];
-        //     $select_reasons = array_map(function($reason) use ($reason_map) {
-        //         return $reason_map[$reason];
-        //     }, $reasons);
         }
     }
 }
