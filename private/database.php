@@ -17,7 +17,7 @@ define('DB_PASSWORD', 'password');
 /**
  * データベースへの接続を行う
  *
- * @return mysqli|void
+ * @return PDO|void
  */
 function connectDB(){
     try{
