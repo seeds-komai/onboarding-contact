@@ -23,42 +23,24 @@ $housenumber = $_POST['housenumber'];
 $content = $_POST['content'];
 
 
-if($_POST['building'] == 'なし'){
-    //データベースにはbuildingの欄をなしで表示、メールでは記載しない
-    $building = '';
-    $building_db = $_POST['building'];
-}else{
-    $building_db = $_POST['building'];
-}
-
-if(isset($_POST['reasons'])){
-	$reasons = $_POST['reasons'];
-
-}else{
-    $reasons = [];
-}
+$building = ($_POST['building'] == 'なし') ? '' : $_POST['building'];
+$reasons = (isset($_POST['reasons'])) ? $_POST['reasons'] : [];
+$reasonsArray = explode(',',$reasons);
 
 
-if(is_string($reasons)){
-    $reasonsArray = explode(',',$reasons);
-}else{
-    $reasonsArray = (array)$reasons;
-}
+//経由、性別のアルファベットを日本語に変換
 
-//都道府県、経由、性別のアルファベットを日本語に変換
-$select_prefecture = $prefecture_map[$prefecture];
+$gender = $_POST['gender'];
+$genderEnum = Gender::fromPostValue($gender);
+$mapper = new gender_map();
+$select_gender = $mapper->toJapanese($genderEnum);
 
-$select_gender = $gender_map[$gender];
 
-$select_reasons = array_map(function($reason) use ($reason_map) {
-    return $reason_map[$reason];
-}, $reasonsArray);
-$select_reasons = implode(',',$select_reasons);
 
 
 //DBにデータを入れる処理
 $connection = connectDB();
-$sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building_db,:content,:reasons)";
+$sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content,:reasons)";
 
 $stmt = $connection->prepare($sql);
 $stmt->bindValue(':name',$name,PDO::PARAM_STR);
@@ -70,7 +52,7 @@ $stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
 $stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
 $stmt->bindValue(':town',$town,PDO::PARAM_STR);
 $stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
-$stmt->bindValue(':building_db',$building_db,PDO::PARAM_STR);
+$stmt->bindValue(':building',$building,PDO::PARAM_STR);
 $stmt->bindValue(':content',$content,PDO::PARAM_STR);
 $stmt->bindValue(':reasons',implode(",",$reasonsArray),PDO::PARAM_STR);
 
@@ -99,16 +81,21 @@ try{
         メール：$email \n
         性別：$select_gender \n
         郵便番号：$top_postalcode-$bottom_postalcode \n
-        住所：$select_prefecture $town $housenumber $building \n
+        住所：$prefecture $town $housenumber $building \n
         お問合せ内容：$content \n
-        このフォームを知った経由：$select_reasons \n
+        このフォームを知った経由：$reasons \n
     ";
     $mail->CharSet = 'UTF-8';
     //メール送信
     $mail->send();
     echo 'メールは正常に送信されました';
+    $msg = 'お問合せありがとうございました。';
+    $title_msg = 'ありがとうございました';
+
 }catch(Exception $e){
     echo "メール送信中にエラーが発生しました：{$mail->ErrorInfo}";
+    $msg = 'お問合せに失敗しました。再度ご記入お願いします';
+    $title_msg = '失敗しました';
 }
 
 
@@ -121,10 +108,10 @@ try{
  <html lang="ja">
  <head>
     <meta charset="UTF-8">
-    <title>ありがとうございました</title>
+    <title><?php echo"$title_msg"; ?></title>
  </head>
  <body>
-    <p>お問い合わせありがとうございました。</p>
+    <p><?php echo"$msg"; ?></p>
     <a href="index.php">戻る</a>
  </body>
  </html>
