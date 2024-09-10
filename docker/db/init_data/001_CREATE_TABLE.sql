@@ -12,6 +12,5 @@ CREATE TABLE IF NOT EXISTS contacts (
     housenumber VARCHAR(255) NOT NULL,
     building VARCHAR(255),
     content TEXT NOT NULL,
-    reason SET('family','friend','newspaper','radio','web'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
