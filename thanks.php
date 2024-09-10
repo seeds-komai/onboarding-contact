@@ -39,24 +39,24 @@ $select_gender = $mapper->toJapanese($genderEnum);
 
 
 //DBにデータを入れる処理
-$connection = connectDB();
-$sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content,:reasons)";
+// $connection = connectDB();
+// $sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content,reason) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content,:reasons)";
 
-$stmt = $connection->prepare($sql);
-$stmt->bindValue(':name',$name,PDO::PARAM_STR);
-$stmt->bindValue(':namerb',$namerb,PDO::PARAM_STR);
-$stmt->bindValue(':email',$email,PDO::PARAM_STR);
-$stmt->bindValue(':gender',$gender,PDO::PARAM_STR);
-$stmt->bindValue(':top_postalcode',$top_postalcode,PDO::PARAM_STR);
-$stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
-$stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
-$stmt->bindValue(':town',$town,PDO::PARAM_STR);
-$stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
-$stmt->bindValue(':building',$building,PDO::PARAM_STR);
-$stmt->bindValue(':content',$content,PDO::PARAM_STR);
-$stmt->bindValue(':reasons',implode(",",$reasonsArray),PDO::PARAM_STR);
+// $stmt = $connection->prepare($sql);
+// $stmt->bindValue(':name',$name,PDO::PARAM_STR);
+// $stmt->bindValue(':namerb',$namerb,PDO::PARAM_STR);
+// $stmt->bindValue(':email',$email,PDO::PARAM_STR);
+// $stmt->bindValue(':gender',$gender,PDO::PARAM_STR);
+// $stmt->bindValue(':top_postalcode',$top_postalcode,PDO::PARAM_STR);
+// $stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
+// $stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
+// $stmt->bindValue(':town',$town,PDO::PARAM_STR);
+// $stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
+// $stmt->bindValue(':building',$building,PDO::PARAM_STR);
+// $stmt->bindValue(':content',$content,PDO::PARAM_STR);
+// $stmt->bindValue(':reasons',implode(",",$reasonsArray),PDO::PARAM_STR);
 
-$stmt->execute();
+// $stmt->execute();
 
 //メールを送信する処理
 // PHPMailerのインスタンス作成
@@ -88,12 +88,44 @@ try{
     $mail->CharSet = 'UTF-8';
     //メール送信
     $mail->send();
+
+    $connection = connectDB();
+    $sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content)";
+
+    $stmt = $connection->prepare($sql);
+    $stmt->bindValue(':name',$name,PDO::PARAM_STR);
+    $stmt->bindValue(':namerb',$namerb,PDO::PARAM_STR);
+    $stmt->bindValue(':email',$email,PDO::PARAM_STR);
+    $stmt->bindValue(':gender',$gender,PDO::PARAM_STR);
+    $stmt->bindValue(':top_postalcode',$top_postalcode,PDO::PARAM_STR);
+    $stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
+    $stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
+    $stmt->bindValue(':town',$town,PDO::PARAM_STR);
+    $stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
+    $stmt->bindValue(':building',$building,PDO::PARAM_STR);
+    $stmt->bindValue(':content',$content,PDO::PARAM_STR);
+
+    $stmt->execute();
+
+    //最後に挿入したデータのidを取得
+    $id = $connection->lastInsertId();
+
+    //
+    $sql = "INSERT INTO reasons(id,reason) VALUE(:id,:reason)";
+    $stmt = $connection->prepare($sql);
+    foreach($reasonsArray as $reason){
+        $stmt->bindValue(':id',$id,PDO::PARAM_INT);
+        $stmt->bindValue(':reason',$reason,PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
     echo 'メールは正常に送信されました';
     $msg = 'お問合せありがとうございました。';
     $title_msg = 'ありがとうございました';
 
 }catch(Exception $e){
-    echo "メール送信中にエラーが発生しました：{$mail->ErrorInfo}";
+    $error_message = "メール送信中にエラーが発生しました: " . $mail->ErrorInfo;
+    echo $error_message;
     $msg = 'お問合せに失敗しました。再度ご記入お願いします';
     $title_msg = '失敗しました';
 }
