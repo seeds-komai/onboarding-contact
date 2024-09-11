@@ -9,8 +9,12 @@ $connection = connectDB();
 $sql = "SELECT * FROM contacts";
 $stmt = $connection->prepare($sql);
 $stmt->execute();
+$contactData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
+$sql = "SELECT * FROM reasons";
+$stmt = $connection->prepare($sql);
+$stmt->execute();
+$reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -24,11 +28,21 @@ $stmt->execute();
     <h1>お問合せ一覧</h1>
     <table border="1">
         <tr>
-            <th>名前</th> <th>フリガナ</th> <th>メールアドレス</th> <th>性別</th> <th>郵便番号</th> <th>都道府県</th>
+            <th>id</th><th>名前</th> <th>フリガナ</th> <th>メールアドレス</th> <th>性別</th> <th>郵便番号</th> <th>都道府県</th>
             <th>市区町村</th> <th>その他</th> <th>建物</th> <th>問い合わせ内容</th> <th>経由</th> <th>投稿日</th>
         </tr>
-        <?php foreach ($stmt as $contacts) {?>
+        <?php foreach ($contactData as $contacts) {
+                $reasons_array = [];
+                foreach($reasonData as $reasons){
+                    if($contacts['id'] == $reasons['id']){
+                        $reasons_array[] = $reasons['reason'];
+                    }
+                }
+                $reasons_string = implode(',',$reasons_array);
+            ?>
+                
             <tr>
+                <td><?= htmlspecialchars($contacts['id'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['name'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['namerb'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['email'],ENT_QUOTES,'UTF-8')?></td>
@@ -39,7 +53,7 @@ $stmt->execute();
                 <td><?= htmlspecialchars($contacts['housenumber'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['building'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['content'],ENT_QUOTES,'UTF-8')?></td>
-                <td><?= htmlspecialchars($contacts['reason'],ENT_QUOTES,'UTF-8')?></td>
+                <td><?= htmlspecialchars($reasons_string,ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['created_at'],ENT_QUOTES,'UTF-8')?></td>
         <?php } ?>
     </table>
