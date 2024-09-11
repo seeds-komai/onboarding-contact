@@ -8,8 +8,9 @@ require_once 'mapping.php';
 
 
 // 実装
-//pageが0の時は入力画面、1の時は確認画面
-$page = 0;
+//pageがinputの時は入力画面、confirmの時は確認画面
+
+$page = "input";
 //記入欄に内容が入っているかチェックするための変数
 $name = "";
 $namerb = "";
@@ -67,10 +68,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 //記入必須欄に一つでも記入されていなかったらpageを0にする
 if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bottom_postalcode == "" || $prefecture == "" || $town == "" || $housenumber == "" || $content == ""){
-    $page = 0;
+    $page = "input";
 }else{
     //全てに記入されていた場合、pageを1にする
-    $page = 1;
+    $page = "confirm";
     //記入が必須でない欄が何も書かれていない時、なしと表示する。
     $building = $_POST['building'];
     if($building == ''){
@@ -81,7 +82,7 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     //戻るボタンが押された時の処理
     if(isset($_POST['edit'])){
-        $page = 0;
+        $page = "input";
         $name = $_POST['name'];
         $namerb = $_POST['namerb'];
         $email = $_POST['email'];
@@ -141,7 +142,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
  </head>
  <body>
-    <?php if($page === 0){?>
+    <?php if($page === "input"){?>
     <!--入力画面-->
     <h1>お問い合わせフォーム</h1>
     <form method = "POST" action = index.php>
@@ -245,7 +246,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </form>
     <?php }?>
     <!--確認画面-->
-    <?php if($page === 1){?>
+    <?php if($page === "confirm"){?>
         <h1>確認画面</h1>
             <!--確認内容-->
             <label for="name">氏名：</label><div class="right"><?php echo htmlspecialchars($name,ENT_QUOTES,'UTF-8'); ?></div>
