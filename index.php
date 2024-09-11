@@ -43,6 +43,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }else{
             $gender = $_POST['gender'];
             $genderEnum = Gender::fromPostValue($gender);
+            class gender_map{
+                public function toJapanese(Gender $gender): string{
+                    return $gender->toJapanese();
+                }
+            }
             $mapper = new gender_map();
             $select_gender = $mapper->toJapanese($genderEnum);
         }
