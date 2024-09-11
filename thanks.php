@@ -88,8 +88,8 @@ try{
     //最後に挿入したデータのidを取得
     $id = $connection->lastInsertId();
 
-    //
-    $sql = "INSERT INTO reasons(id,reason) VALUE(:id,:reason)";
+
+    $sql = "INSERT INTO reasons(contact_id,reason) VALUE(:id,:reason)";
     $stmt = $connection->prepare($sql);
     foreach($reasonsArray as $reason){
         $stmt->bindValue(':id',$id,PDO::PARAM_INT);
