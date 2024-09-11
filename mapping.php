@@ -20,8 +20,3 @@ enum  Gender: string{
     }
 }
 
-class gender_map{
-    public function toJapanese(Gender $gender): string{
-        return $gender->toJapanese();
-    }
-}
