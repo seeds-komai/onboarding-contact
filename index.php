@@ -72,10 +72,9 @@ if($name == "" || $namerb == "" || $gender== "" || $top_postalcode== "" || $bott
     //全てに記入されていた場合、pageを1にする
     $page = 1;
     //記入が必須でない欄が何も書かれていない時、なしと表示する。
-    $emp = 'なし';
     $building = $_POST['building'];
     if($building == ''){
-        $building = $emp;
+        $building = '';
     }
 }
 
