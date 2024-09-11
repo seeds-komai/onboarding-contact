@@ -15,6 +15,7 @@ $sql = "SELECT * FROM reasons";
 $stmt = $connection->prepare($sql);
 $stmt->execute();
 $reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +35,7 @@ $reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($contactData as $contacts) {
                 $reasons_array = [];
                 foreach($reasonData as $reasons){
-                    if($contacts['id'] == $reasons['id']){
+                    if($contacts['id'] == $reasons['contact_id']){
                         $reasons_array[] = $reasons['reason'];
                     }
                 }
