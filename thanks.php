@@ -47,8 +47,6 @@ $mail = new PHPMailer(true);
 try{
     $mail->isSMTP();
     $mail->Host = 'mailhog';
-    $mail->SMTPAuth = false;
-    $mail->SMTPSecure = false;
     $mail->Port = 1025;
 
     //送信者と受信者の設定
@@ -71,35 +69,43 @@ try{
     $mail->CharSet = 'UTF-8';
     //メール送信
     $mail->send();
+    try{
+        $connection = connectDB();
+        //トランザクション開始
+        $connection->beginTransaction();
 
-    $connection = connectDB();
-    $sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content)";
+        $sql = "INSERT INTO contacts(name,namerb,email,gender,top_postalcode,bottom_postalcode,prefecture,town,housenumber,building,content) VALUES (:name,:namerb,:email,:gender,:top_postalcode,:bottom_postalcode,:prefecture,:town,:housenumber,:building,:content)";
 
-    $stmt = $connection->prepare($sql);
-    $stmt->bindValue(':name',$name,PDO::PARAM_STR);
-    $stmt->bindValue(':namerb',$namerb,PDO::PARAM_STR);
-    $stmt->bindValue(':email',$email,PDO::PARAM_STR);
-    $stmt->bindValue(':gender',$gender,PDO::PARAM_STR);
-    $stmt->bindValue(':top_postalcode',$top_postalcode,PDO::PARAM_STR);
-    $stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
-    $stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
-    $stmt->bindValue(':town',$town,PDO::PARAM_STR);
-    $stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
-    $stmt->bindValue(':building',$building,PDO::PARAM_STR);
-    $stmt->bindValue(':content',$content,PDO::PARAM_STR);
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue(':name',$name,PDO::PARAM_STR);
+        $stmt->bindValue(':namerb',$namerb,PDO::PARAM_STR);
+        $stmt->bindValue(':email',$email,PDO::PARAM_STR);
+        $stmt->bindValue(':gender',$gender,PDO::PARAM_STR);
+        $stmt->bindValue(':top_postalcode',$top_postalcode,PDO::PARAM_STR);
+        $stmt->bindValue(':bottom_postalcode',$bottom_postalcode,PDO::PARAM_STR);
+        $stmt->bindValue(':prefecture',$prefecture,PDO::PARAM_STR);
+        $stmt->bindValue(':town',$town,PDO::PARAM_STR);
+        $stmt->bindValue(':housenumber',$housenumber,PDO::PARAM_STR);
+        $stmt->bindValue(':building',$building,PDO::PARAM_STR);
+        $stmt->bindValue(':content',$content,PDO::PARAM_STR);
 
-    $stmt->execute();
-
-    //最後に挿入したデータのidを取得
-    $id = $connection->lastInsertId();
-
-
-    $sql = "INSERT INTO reasons(contact_id,reason) VALUE(:id,:reason)";
-    $stmt = $connection->prepare($sql);
-    foreach($reasonsArray as $reason){
-        $stmt->bindValue(':id',$id,PDO::PARAM_INT);
-        $stmt->bindValue(':reason',$reason,PDO::PARAM_STR);
         $stmt->execute();
+
+        //最後に挿入したデータのidを取得
+        $id = $connection->lastInsertId();
+
+
+        $sql = "INSERT INTO reasons(contact_id,reason) VALUE(:id,:reason)";
+        $stmt = $connection->prepare($sql);
+        foreach($reasonsArray as $reason){
+            $stmt->bindValue(':id',$id,PDO::PARAM_INT);
+            $stmt->bindValue(':reason',$reason,PDO::PARAM_STR);
+            $stmt->execute();
+        }
+        $connection->commit();
+    }catch(Exception $e){
+        $connection->rollBack();
+        echo "エラーが発生しました" . $e->getMessage();
     }
 
     echo 'メールは正常に送信されました';
