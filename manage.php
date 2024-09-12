@@ -16,6 +16,18 @@ $stmt = $connection->prepare($sql);
 $stmt->execute();
 $reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+foreach ($contactData as $contacts) {
+    $temp_array = [];
+    $reason_array[$contacts['id']] = [];
+    foreach($reasonData as $reasons){
+        if($contacts['id'] == $reasons['contact_id']){
+            $temp_array[] = $reasons['reason'];
+        }
+    }
+    $reason_array[$contacts['id']][] = implode(',',$temp_array);
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -33,13 +45,6 @@ $reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <th>市区町村</th> <th>その他</th> <th>建物</th> <th>問い合わせ内容</th> <th>経由</th> <th>投稿日</th>
         </tr>
         <?php foreach ($contactData as $contacts) {
-                $reasons_array = [];
-                foreach($reasonData as $reasons){
-                    if($contacts['id'] == $reasons['contact_id']){
-                        $reasons_array[] = $reasons['reason'];
-                    }
-                }
-                $reasons_string = implode(',',$reasons_array);
             ?>
                 
             <tr>
@@ -54,7 +59,10 @@ $reasonData = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= htmlspecialchars($contacts['housenumber'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['building'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['content'],ENT_QUOTES,'UTF-8')?></td>
-                <td><?= htmlspecialchars($reasons_string,ENT_QUOTES,'UTF-8')?></td>
+                <td><?php 
+                        foreach($reason_array[$contacts['id']] as $reason){
+                            echo htmlspecialchars($reason,ENT_QUOTES,'UTF-8');
+                        }?></td>
                 <td><?= htmlspecialchars($contacts['created_at'],ENT_QUOTES,'UTF-8')?></td>
         <?php } ?>
     </table>
