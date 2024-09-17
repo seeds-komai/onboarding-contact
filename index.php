@@ -4,7 +4,9 @@
  * ---------------------------------------- */
 require_once 'private/bootstrap.php';
 require_once 'private/database.php';
-require_once 'mapping.php';
+require_once 'mapping/mapping_gender.php';
+require_once 'mapping/mapping_reason.php';
+require_once 'mapping/mapping_prefecture.php';
 
 
 // 実装
@@ -38,18 +40,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $name = $_POST['name'];
         $namerb = $_POST['namerb'];
         $email = $_POST['email'];
-        if($_POST['gender'] == ""){
-            $gender = "";
-        }else{
+        if($_POST['gender'] == "male"){
             $gender = $_POST['gender'];
-            $genderEnum = Gender::fromPostValue($gender);
-            class gender_map{
-                public function toJapanese(Gender $gender): string{
-                    return $gender->toJapanese();
-                }
-            }
-            $mapper = new gender_map();
-            $select_gender = $mapper->toJapanese($genderEnum);
+            // $genderEnum = Gender::fromPostValue($gender);
+            $select_gender = Gender::Male->value;
+        }else if($_POST['gender'] == 'female'){
+            $gender = $_POST['gender'];
+            // $genderEnum = Gender::fromPostValue($gender);
+            $select_gender = Gender::Female->value;
+        }else{
+            $gender = '';
         }
         $gender = $_POST['gender'];
         $top_postalcode= $_POST['top_postalcode'];
@@ -175,54 +175,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <div  class="right">
                 <select name = "prefecture" id = "prefecture" required>
                     <option value="">選択してください</option>
-                    <option value="北海道" <?php echo (isset($prefecture) && $prefecture === '北海道') ? 'selected' : ''; ?>>北海道</option>
-                    <option value="青森県" <?php echo (isset($prefecture) && $prefecture === '青森') ? 'selected' : ''; ?>>青森県</option>
-                    <option value="岩手県" <?php echo (isset($prefecture) && $prefecture === '岩手県') ? 'selected' : ''; ?>>岩手県</option>
-                    <option value="宮城県" <?php echo (isset($prefecture) && $prefecture === '宮城県') ? 'selected' : ''; ?>>宮城県</option>
-                    <option value="秋田県" <?php echo (isset($prefecture) && $prefecture === '秋田県') ? 'selected' : ''; ?>>秋田県</option>
-                    <option value="山形県" <?php echo (isset($prefecture) && $prefecture === '山形県') ? 'selected' : ''; ?>>山形県</option>
-                    <option value="福島県" <?php echo (isset($prefecture) && $prefecture === '福島県') ? 'selected' : ''; ?>>福島県</option>
-                    <option value="茨城県" <?php echo (isset($prefecture) && $prefecture === '茨城県') ? 'selected' : ''; ?>>茨城県</option>
-                    <option value="栃木県" <?php echo (isset($prefecture) && $prefecture === '栃木県') ? 'selected' : ''; ?>>栃木県</option>
-                    <option value="群馬県" <?php echo (isset($prefecture) && $prefecture === '群馬県') ? 'selected' : ''; ?>>群馬県</option>
-                    <option value="埼玉県" <?php echo (isset($prefecture) && $prefecture === '埼玉県') ? 'selected' : ''; ?>>埼玉県</option>
-                    <option value="千葉県" <?php echo (isset($prefecture) && $prefecture === '千葉県') ? 'selected' : ''; ?>>千葉県</option>
-                    <option value="東京都" <?php echo (isset($prefecture) && $prefecture === '東京都') ? 'selected' : ''; ?>>東京都</option>
-                    <option value="神奈川県" <?php echo (isset($prefecture) && $prefecture === '神奈川県') ? 'selected' : ''; ?>>神奈川県</option>
-                    <option value="新潟県" <?php echo (isset($prefecture) && $prefecture === '新潟県') ? 'selected' : ''; ?>>新潟県</option>
-                    <option value="富山県" <?php echo (isset($prefecture) && $prefecture === '富山県') ? 'selected' : ''; ?>>富山県</option>
-                    <option value="石川県" <?php echo (isset($prefecture) && $prefecture === '石川県') ? 'selected' : ''; ?>>石川県</option>
-                    <option value="福井県" <?php echo (isset($prefecture) && $prefecture === '福井県') ? 'selected' : ''; ?>>福井県</option>
-                    <option value="山梨県" <?php echo (isset($prefecture) && $prefecture === '山梨県') ? 'selected' : ''; ?>>山梨県</option>
-                    <option value="長野県" <?php echo (isset($prefecture) && $prefecture === '長野県') ? 'selected' : ''; ?>>長野県</option>
-                    <option value="岐阜県" <?php echo (isset($prefecture) && $prefecture === '岐阜県') ? 'selected' : ''; ?>>岐阜県</option>
-                    <option value="静岡県" <?php echo (isset($prefecture) && $prefecture === '静岡県') ? 'selected' : ''; ?>>静岡県</option>
-                    <option value="愛知県" <?php echo (isset($prefecture) && $prefecture === '愛知県') ? 'selected' : ''; ?>>愛知県</option>
-                    <option value="三重県" <?php echo (isset($prefecture) && $prefecture === '三重県') ? 'selected' : ''; ?>>三重県</option>
-                    <option value="滋賀県" <?php echo (isset($prefecture) && $prefecture === '滋賀県') ? 'selected' : ''; ?>>滋賀県</option>
-                    <option value="京都府" <?php echo (isset($prefecture) && $prefecture === '京都府') ? 'selected' : ''; ?>>京都府</option>
-                    <option value="大阪府" <?php echo (isset($prefecture) && $prefecture === '大阪府') ? 'selected' : ''; ?>>大阪府</option>
-                    <option value="兵庫県" <?php echo (isset($prefecture) && $prefecture === '兵庫県') ? 'selected' : ''; ?>>兵庫県</option>
-                    <option value="奈良県" <?php echo (isset($prefecture) && $prefecture === '奈良県') ? 'selected' : ''; ?>>奈良県</option>
-                    <option value="和歌山県" <?php echo (isset($prefecture) && $prefecture === '和歌山県') ? 'selected' : ''; ?>>和歌山県</option>
-                    <option value="鳥取県" <?php echo (isset($prefecture) && $prefecture === '鳥取県') ? 'selected' : ''; ?>>鳥取県</option>
-                    <option value="島根県" <?php echo (isset($prefecture) && $prefecture === '島根県') ? 'selected' : ''; ?>>島根県</option>
-                    <option value="岡山県" <?php echo (isset($prefecture) && $prefecture === '岡山県') ? 'selected' : ''; ?>>岡山県</option>
-                    <option value="広島県" <?php echo (isset($prefecture) && $prefecture === '広島県') ? 'selected' : ''; ?>>広島県</option>
-                    <option value="山口県" <?php echo (isset($prefecture) && $prefecture === '山口県') ? 'selected' : ''; ?>>山口県</option>
-                    <option value="徳島県" <?php echo (isset($prefecture) && $prefecture === '徳島県') ? 'selected' : ''; ?>>徳島県</option>
-                    <option value="香川県" <?php echo (isset($prefecture) && $prefecture === '香川県') ? 'selected' : ''; ?>>香川県</option>
-                    <option value="愛媛県" <?php echo (isset($prefecture) && $prefecture === '愛媛県') ? 'selected' : ''; ?>>愛媛県</option>
-                    <option value="高知県" <?php echo (isset($prefecture) && $prefecture === '高知県') ? 'selected' : ''; ?>>高知県</option>
-                    <option value="福岡県" <?php echo (isset($prefecture) && $prefecture === '福岡県') ? 'selected' : ''; ?>>福岡県</option>
-                    <option value="佐賀県" <?php echo (isset($prefecture) && $prefecture === '佐賀県') ? 'selected' : ''; ?>>佐賀県</option>
-                    <option value="長崎県" <?php echo (isset($prefecture) && $prefecture === '長崎県') ? 'selected' : ''; ?>>長崎県</option>
-                    <option value="熊本県" <?php echo (isset($prefecture) && $prefecture === '熊本県') ? 'selected' : ''; ?>>熊本県</option>
-                    <option value="大分県" <?php echo (isset($prefecture) && $prefecture === '大分県') ? 'selected' : ''; ?>>大分県</option>
-                    <option value="宮崎県" <?php echo (isset($prefecture) && $prefecture === '宮城県') ? 'selected' : ''; ?>>宮崎県</option>
-                    <option value="鹿児島県" <?php echo (isset($prefecture) && $prefecture === '鹿児島県') ? 'selected' : ''; ?>>鹿児島県</option>
-                    <option value="沖縄県" <?php echo (isset($prefecture) && $prefecture === '沖縄県') ? 'selected' : ''; ?>>沖縄県</option>
-                
+                    <?php foreach (Prefecture::cases() as $prefectures){ ?>
+                        <option value="<?= htmlspecialchars($prefectures->value) ?>" <?php echo (isset($prefecture) && $prefecture === $prefectures->value)? 'selected' : ''; ?>>
+                            <?= htmlspecialchars($prefectures->value) ?>
+                        </option>
+                    <?php }; ?>
                 </select>
             </div>
             <label for="town">住所(市区町村)※</label>
@@ -239,11 +196,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             <label>このフォームを知った経由</label>
             <div  class="right">
-                <input type="checkbox" id="checkbox" name="reasons[]" value="家族から聞いた" <?php echo (isset($_POST['reasons']) && in_array('家族から聞いた', $reasons)) ? 'checked' : ''; ?>>家族から聞いた<br>
-                <input type="checkbox" id="checkbox" name="reasons[]" value="友達から聞いた" <?php echo (isset($_POST['reasons']) && in_array('友達から聞いた', $reasons)) ? 'checked' : ''; ?>>友達から聞いた<br>
-                <input type="checkbox" id="checkbox" name="reasons[]" value="新聞" <?php echo (isset($_POST['reasons']) && in_array('新聞', $reasons)) ? 'checked' : ''; ?>>新聞<br>
-                <input type="checkbox" id="checkbox" name="reasons[]" value="ラジオ" <?php echo (isset($_POST['reasons']) && in_array('ラジオ', $reasons)) ? 'checked' : ''; ?>>ラジオ<br>
-                <input type="checkbox" id="checkbox" name="reasons[]" value="Web" <?php echo (isset($_POST['reasons']) && in_array('Web', $reasons)) ? 'checked' : ''; ?>>Web<br>
+                <?php foreach(Reason::cases() as $reason){ ?>
+                    <input type="checkbox" id="checkbox" name="reasons[]" value="<?= htmlspecialchars($reason->value) ?>" <?php echo (isset($_POST['reasons']) && in_array($reason->value, $reasons)) ? 'checked' : ''; ?>><?= htmlspecialchars($reason->value); ?><br>
+                <?php }; ?>
             </div>
         </div>
         <input type="submit" name="confirm" id="confirm" value="確認">
