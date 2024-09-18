@@ -10,7 +10,7 @@ require_once 'mapping/mapping_prefecture.php';
 
 
 // 実装
-//input=true&&comfir=falseの時入力画面、input=false&&comfirm=trueの時確認画面
+//input=trueかつcomfir=falseの時入力画面、input=falseかつcomfirm=trueの時確認画面
 $input = true;
 $comfirm = false;
 //記入欄に内容が入っているかチェックするための変数
