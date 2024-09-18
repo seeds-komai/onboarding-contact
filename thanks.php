@@ -2,7 +2,7 @@
 require_once 'private/bootstrap.php';
 require_once 'private/database.php';
 
-require_once 'mapping.php';
+require_once 'mapping/mapping_gender.php';
 
 // 実装
 // PHPMailerを使用
@@ -27,20 +27,6 @@ $building = $_POST['building'] ?? '';
 $reasons = $_POST['reasons'] ?? [];
 $reasonsArray = explode(',',$reasons);
 
-
-//経由、性別のアルファベットを日本語に変換
-
-$gender = $_POST['gender'];
-$genderEnum = Gender::fromPostValue($gender);
-class gender_map{
-    public function toJapanese(Gender $gender): string{
-        return $gender->toJapanese();
-    }
-}
-$mapper = new gender_map();
-$select_gender = $mapper->toJapanese($genderEnum);
-
-
 //メールを送信する処理
 // PHPMailerのインスタンス作成
 $mail = new PHPMailer(true);
@@ -60,7 +46,7 @@ try{
         氏名：$name \n
         フリガナ：$namerb \n
         メール：$email \n
-        性別：$select_gender \n
+        性別：$gender \n
         郵便番号：$top_postalcode-$bottom_postalcode \n
         住所：$prefecture $town $housenumber $building \n
         お問合せ内容：$content \n
