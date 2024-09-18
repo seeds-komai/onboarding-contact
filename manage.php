@@ -27,7 +27,6 @@ foreach ($contactData as $contacts) {
     $reason_array[$contacts['id']][] = implode(',',$temp_array);
 }
 
-
 ?>
 
 <!DOCTYPE html>
@@ -44,9 +43,7 @@ foreach ($contactData as $contacts) {
             <th>id</th><th>名前</th> <th>フリガナ</th> <th>メールアドレス</th> <th>性別</th> <th>郵便番号</th> <th>都道府県</th>
             <th>市区町村</th> <th>その他</th> <th>建物</th> <th>問い合わせ内容</th> <th>経由</th> <th>投稿日</th>
         </tr>
-        <?php foreach ($contactData as $contacts) {
-            ?>
-                
+        <?php foreach ($contactData as $contacts) {?>   
             <tr>
                 <td><?= htmlspecialchars($contacts['id'],ENT_QUOTES,'UTF-8')?></td>
                 <td><?= htmlspecialchars($contacts['name'],ENT_QUOTES,'UTF-8')?></td>
