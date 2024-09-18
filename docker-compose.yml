@@ -20,3 +20,12 @@ services:
       - ./:/var/www/html
     ports:
       - "80:80"
+    command: /bin/bash -c  "composer install && apachectl -D FOREGROUND"
+    depends_on:
+      - mailhog
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
