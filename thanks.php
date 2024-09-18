@@ -43,14 +43,14 @@ try{
     $mail->isHTML(true);
     $mail->Subject = 'お問合せありがとうございます';
     $mail->Body = "
-        氏名：$name \n
-        フリガナ：$namerb \n
-        メール：$email \n
-        性別：$gender \n
-        郵便番号：$top_postalcode-$bottom_postalcode \n
-        住所：$prefecture $town $housenumber $building \n
-        お問合せ内容：$content \n
-        このフォームを知った経由：$reasons \n
+        氏名：" . htmlspecialchars($name,ENT_QUOTES,'UTF-8') . " \n
+        フリガナ：" . htmlspecialchars($namerb,ENT_QUOTES,'UTF-8') . " \n
+        メール：" . htmlspecialchars($email,ENT_QUOTES,'UTF-8') . " \n
+        性別：" . htmlspecialchars($gender,ENT_QUOTES,'UTF-8') . " \n
+        郵便番号：" . htmlspecialchars($top_postalcode,ENT_QUOTES,'UTF-8') . "-" . htmlspecialchars($bottom_postalcode,ENT_QUOTES,'UTF-8') . " \n
+        住所：" . htmlspecialchars($prefecture,ENT_QUOTES,'UTF-8') . "" . htmlspecialchars($town,ENT_QUOTES,'UTF-8') . "" . htmlspecialchars($housenumber,ENT_QUOTES,'UTF-8') . "" . htmlspecialchars($building,ENT_QUOTES,'UTF-8') . " \n
+        お問合せ内容：" . htmlspecialchars($content,ENT_QUOTES,'UTF-8') . " \n
+        このフォームを知った経由：" . htmlspecialchars($reasons,ENT_QUOTES,'UTF-8') . " \n
     ";
     $mail->CharSet = 'UTF-8';
     //メール送信
