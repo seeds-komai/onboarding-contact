@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     name VARCHAR(255) NOT NULL,
     namerb VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    gender ENUM('male','female') NOT NULL,
+    gender VARCHAR(255) NOT NULL,
     top_postalcode CHAR(3) NOT NULL,
     bottom_postalcode CHAR(4) NOT NULL,
     prefecture VARCHAR(255) NOT NULL,
